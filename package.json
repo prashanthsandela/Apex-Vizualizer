@@ -1,0 +1,22 @@
+{
+  "name": "apexvizualizer",
+  "version": "1.0.0",
+  "description": "Apache Apex stream vizualizer",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/prashanthsandela/Apex-Vizualizer.git"
+  },
+  "author": "prashanthsandela@gmail.com",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/prashanthsandela/Apex-Vizualizer/issues"
+  },
+  "homepage": "https://github.com/prashanthsandela/Apex-Vizualizer#readme",
+  "dependencies": {
+    "express": "^4.15.4"
+  }
+}
