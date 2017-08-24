@@ -159,452 +159,80 @@ function process() {
 }
 
 var data =  {
-		  "streams": [
-			    {
-			      "logicalName": "recieveFromKafka",
-			      "source": {
-			        "operatorId": "1",
-			        "portName": "outputPort"
-			      },
-			      "sinks": [
-			        {
-			          "operatorId": "4",
-			          "portName": "<merge#outputPort>(1.outputPort)"
-			        }
-			      ],
-			      "locality": null
+		  "streams": [{
+			    "logicalName": "randomData",
+			    "source": {
+			      "operatorId": "1",
+			      "portName": "out"
 			    },
-			    {
-			      "logicalName": "recieveFromKafka",
-			      "source": {
-			        "operatorId": "2",
-			        "portName": "outputPort"
-			      },
-			      "sinks": [
-			        {
-			          "operatorId": "4",
-			          "portName": "<merge#outputPort>(1.outputPort)"
-			        }
-			      ],
-			      "locality": null
-			    },
-			    {
-			      "logicalName": "recieveFromKafka",
-			      "source": {
-			        "operatorId": "4",
-			        "portName": "outputPort"
-			      },
-			      "sinks": [
-			        {
-			          "operatorId": "3",
-			          "portName": "<merge#outputPort>(1.outputPort)"
-			        }
-			      ],
-			      "locality": null
-			    },
-			    {
-			      "logicalName": "uniqueMessage",
-			      "source": {
-			        "operatorId": "3",
-			        "portName": "outputPort"
-			      },
-			      "sinks": [
-			        {
-			          "operatorId": "5",
-			          "portName": "inputPort"
-			        }
-			      ],
-			      "locality": null
-			    },
-			    {
-			      "logicalName": "processHdfsAttributes",
-			      "source": {
-			        "operatorId": "5",
-			        "portName": "outputPort"
-			      },
-			      "sinks": [
-			        {
-			          "operatorId": "6",
-			          "portName": "inputPort"
-			        }
-			      ],
-			      "locality": null
-			    },
-			    {
-			      "logicalName": "saveErrorsToFile",
-			      "source": {
-			        "operatorId": "5",
-			        "portName": "errorPort"
-			      },
-			      "sinks": [
-			        {
-			          "operatorId": "9",
-			          "portName": "input"
-			        }
-			      ],
-			      "locality": null
-			    },
-			    {
-			      "logicalName": "sendToAccessCounter",
-			      "source": {
-			        "operatorId": "6",
-			        "portName": "accessCountPort"
-			      },
-			      "sinks": [
-			        {
-			          "operatorId": "7",
-			          "portName": "inputPort)"
-			        }
-			      ],
-			      "locality": null
-			    },
-			    {
-			      "logicalName": "sinkToHdfs",
-			      "source": {
-			        "operatorId": "7",
-			        "portName": "outputPort"
-			      },
-			      "sinks": [
-			        {
-			          "operatorId": "8",
-			          "portName": "input"
-			        }
-			      ],
-			      "locality": null
-			    }
-			  ],
+			    "sinks": [{
+			      "operatorId": "2",
+			      "portName": "input"
+			    }],
+			    "locality": "CONTAINER_LOCAL"
+			  }],
 			  "operators": [
 			    {
 			      "id": "1",
-			      "name": "logToJsonKafkaIn",
+			      "name": "randomGenerator",
 			      "className": "com.example.myapexapp.RandomNumberGenerator",
-			      "container": "container_1503210674869_0002_01_000002",
-			      "host": "quickstart.cloudera:36900",
-			      "totalTuplesProcessed": "617022",
-			      "totalTuplesEmitted": "0",
+			      "container": "container_1503559012660_0001_01_000002",
+			      "host": "quickstart.cloudera:53884",
+			      "totalTuplesProcessed": "0",
+			      "totalTuplesEmitted": "4032025",
 			      "tuplesProcessedPSMA": "0",
-			      "tuplesEmittedPSMA": "2000",
-			      "cpuPercentageMA": "0.08789582765203163",
+			      "tuplesEmittedPSMA": "1998",
+			      "cpuPercentageMA": "0.15172656609051854",
 			      "latencyMA": "0",
 			      "status": "ACTIVE",
-			      "lastHeartbeat": "1503292357878",
+			      "lastHeartbeat": "1503566336429",
 			      "failureCount": "0",
-			      "recoveryWindowId": "6456590139547189847",
-			      "currentWindowId": "6456590139547189887",
-			      "ports": [
-			        {
-			          "name": "outputPort",
-			          "type": "output",
-			          "totalTuples": "617022",
-			          "tuplesPSMA": "2000",
-			          "bufferServerBytesPSMA": "0",
-			          "queueSizeMA": "0",
-			          "recordingId": null
-			        }
-			      ],
+			      "recoveryWindowId": "6457759530292875187",
+			      "currentWindowId": "6457759530292875225",
+			      "ports": [{
+			        "name": "out",
+			        "type": "output",
+			        "totalTuples": "4032025",
+			        "tuplesPSMA": "1998",
+			        "bufferServerBytesPSMA": "0",
+			        "queueSizeMA": "0",
+			        "recordingId": null
+			      }],
 			      "unifierClass": null,
-			      "logicalName": "logToJsonKafkaIn",
+			      "logicalName": "randomGenerator",
 			      "recordingId": null,
 			      "counters": null,
-			      "metrics": {
-			        "metrics" : {
-			          "stats" : [{
-			            "cluster" : "xyzlkjdf",
-			            "msgsPerSec" : "0"
-			          }]
-			        }
-			      },
-			      "checkpointStartTime": "1503292337509",
-			      "checkpointTime": "36",
-			      "checkpointTimeMA": "43"
+			      "metrics": {},
+			      "checkpointStartTime": "1503566317397",
+			      "checkpointTime": "16",
+			      "checkpointTimeMA": "17"
 			    },
 			    {
 			      "id": "2",
-			      "name": "logToJsonKafkaIn",
+			      "name": "console",
 			      "className": "com.datatorrent.lib.io.ConsoleOutputOperator",
-			      "container": "container_1503210674869_0002_01_000002",
-			      "host": "quickstart.cloudera:36900",
-			      "totalTuplesProcessed": "617022",
+			      "container": "container_1503559012660_0001_01_000002",
+			      "host": "quickstart.cloudera:53884",
+			      "totalTuplesProcessed": "4032025",
 			      "totalTuplesEmitted": "0",
-			      "tuplesProcessedPSMA": "2000",
+			      "tuplesProcessedPSMA": "1996",
 			      "tuplesEmittedPSMA": "0",
-			      "cpuPercentageMA": "0.5325968799999999",
-			      "latencyMA": "6",
+			      "cpuPercentageMA": "0.6623600119784387",
+			      "latencyMA": "4",
 			      "status": "ACTIVE",
-			      "lastHeartbeat": "1503292357878",
+			      "lastHeartbeat": "1503566336429",
 			      "failureCount": "0",
-			      "recoveryWindowId": "6456590139547189847",
-			      "currentWindowId": "6456590139547189887",
-			      "ports": [
-			        {
-			          "name": "input",
-			          "type": "input",
-			          "totalTuples": "617022",
-			          "tuplesPSMA": "2000",
-			          "bufferServerBytesPSMA": "0",
-			          "queueSizeMA": "1001",
-			          "recordingId": null
-			        }
-			      ],
-			      "unifierClass": null,
-			      "logicalName": "console",
-			      "recordingId": null,
-			      "counters": null,
-			      "metrics": {},
-			      "checkpointStartTime": "0",
-			      "checkpointTime": "0",
-			      "checkpointTimeMA": "0"
-			    },
-			    {
-			      "id": "4",
-			      "name": "logToJsonKafkaIn.outputPort#unifier",
-			      "className": "com.datatorrent.lib.io.ConsoleOutputOperator",
-			      "container": "container_1503210674869_0002_01_000002",
-			      "host": "quickstart.cloudera:36900",
-			      "totalTuplesProcessed": "617022",
-			      "totalTuplesEmitted": "0",
-			      "tuplesProcessedPSMA": "2000",
-			      "tuplesEmittedPSMA": "0",
-			      "cpuPercentageMA": "0.5325968799999999",
-			      "latencyMA": "6",
-			      "status": "ACTIVE",
-			      "lastHeartbeat": "1503292357878",
-			      "failureCount": "0",
-			      "recoveryWindowId": "6456590139547189847",
-			      "currentWindowId": "6456590139547189887",
-			      "ports": [
-			        {
-			          "name": "input",
-			          "type": "input",
-			          "totalTuples": "617022",
-			          "tuplesPSMA": "2000",
-			          "bufferServerBytesPSMA": "0",
-			          "queueSizeMA": "1001",
-			          "recordingId": null
-			        }
-			      ],
-			      "unifierClass": null,
-			      "logicalName": "console",
-			      "recordingId": null,
-			      "counters": null,
-			      "metrics": {},
-			      "checkpointStartTime": "0",
-			      "checkpointTime": "0",
-			      "checkpointTimeMA": "0"
-			    },
-			    {
-			      "id": "3",
-			      "name": "dedupOperator",
-			      "className": "com.datatorrent.lib.io.ConsoleOutputOperator",
-			      "container": "container_1503210674869_0002_01_000002",
-			      "host": "quickstart.cloudera:36900",
-			      "totalTuplesProcessed": "617022",
-			      "totalTuplesEmitted": "0",
-			      "tuplesProcessedPSMA": "2000",
-			      "tuplesEmittedPSMA": "0",
-			      "cpuPercentageMA": "0.5325968799999999",
-			      "latencyMA": "6",
-			      "status": "ACTIVE",
-			      "lastHeartbeat": "1503292357878",
-			      "failureCount": "0",
-			      "recoveryWindowId": "6456590139547189847",
-			      "currentWindowId": "6456590139547189887",
-			      "ports": [
-			        {
-			          "name": "input",
-			          "type": "input",
-			          "totalTuples": "617022",
-			          "tuplesPSMA": "2000",
-			          "bufferServerBytesPSMA": "0",
-			          "queueSizeMA": "1001",
-			          "recordingId": null
-			        }
-			      ],
-			      "unifierClass": null,
-			      "logicalName": "console",
-			      "recordingId": null,
-			      "counters": null,
-			      "metrics": {},
-			      "checkpointStartTime": "0",
-			      "checkpointTime": "0",
-			      "checkpointTimeMA": "0"
-			    },
-			    {
-			      "id": "5",
-			      "name": "attrProcessorFinder",
-			      "className": "com.datatorrent.lib.io.ConsoleOutputOperator",
-			      "container": "container_1503210674869_0002_01_000002",
-			      "host": "quickstart.cloudera:36900",
-			      "totalTuplesProcessed": "617022",
-			      "totalTuplesEmitted": "0",
-			      "tuplesProcessedPSMA": "2000",
-			      "tuplesEmittedPSMA": "0",
-			      "cpuPercentageMA": "0.5325968799999999",
-			      "latencyMA": "6",
-			      "status": "ACTIVE",
-			      "lastHeartbeat": "1503292357878",
-			      "failureCount": "0",
-			      "recoveryWindowId": "6456590139547189847",
-			      "currentWindowId": "6456590139547189887",
-			      "ports": [
-			        {
-			          "name": "input",
-			          "type": "input",
-			          "totalTuples": "617022",
-			          "tuplesPSMA": "2000",
-			          "bufferServerBytesPSMA": "0",
-			          "queueSizeMA": "1001",
-			          "recordingId": null
-			        }
-			      ],
-			      "unifierClass": null,
-			      "logicalName": "console",
-			      "recordingId": null,
-			      "counters": null,
-			      "metrics": {},
-			      "checkpointStartTime": "0",
-			      "checkpointTime": "0",
-			      "checkpointTimeMA": "0"
-			    },
-			    {
-			      "id": "6",
-			      "name": "hdfsAttrProcessor",
-			      "className": "com.datatorrent.lib.io.ConsoleOutputOperator",
-			      "container": "container_1503210674869_0002_01_000002",
-			      "host": "quickstart.cloudera:36900",
-			      "totalTuplesProcessed": "617022",
-			      "totalTuplesEmitted": "0",
-			      "tuplesProcessedPSMA": "2000",
-			      "tuplesEmittedPSMA": "0",
-			      "cpuPercentageMA": "0.5325968799999999",
-			      "latencyMA": "6",
-			      "status": "ACTIVE",
-			      "lastHeartbeat": "1503292357878",
-			      "failureCount": "0",
-			      "recoveryWindowId": "6456590139547189847",
-			      "currentWindowId": "6456590139547189887",
-			      "ports": [
-			        {
-			          "name": "input",
-			          "type": "input",
-			          "totalTuples": "617022",
-			          "tuplesPSMA": "2000",
-			          "bufferServerBytesPSMA": "0",
-			          "queueSizeMA": "1001",
-			          "recordingId": null
-			        }
-			      ],
-			      "unifierClass": null,
-			      "logicalName": "console",
-			      "recordingId": null,
-			      "counters": null,
-			      "metrics": {},
-			      "checkpointStartTime": "0",
-			      "checkpointTime": "0",
-			      "checkpointTimeMA": "0"
-			    },
-			    {
-			      "id": "7",
-			      "name": "usageCountCalculator",
-			      "className": "com.datatorrent.lib.io.ConsoleOutputOperator",
-			      "container": "container_1503210674869_0002_01_000002",
-			      "host": "quickstart.cloudera:36900",
-			      "totalTuplesProcessed": "617022",
-			      "totalTuplesEmitted": "0",
-			      "tuplesProcessedPSMA": "2000",
-			      "tuplesEmittedPSMA": "0",
-			      "cpuPercentageMA": "0.5325968799999999",
-			      "latencyMA": "6",
-			      "status": "ACTIVE",
-			      "lastHeartbeat": "1503292357878",
-			      "failureCount": "0",
-			      "recoveryWindowId": "6456590139547189847",
-			      "currentWindowId": "6456590139547189887",
-			      "ports": [
-			        {
-			          "name": "input",
-			          "type": "input",
-			          "totalTuples": "617022",
-			          "tuplesPSMA": "2000",
-			          "bufferServerBytesPSMA": "0",
-			          "queueSizeMA": "1001",
-			          "recordingId": null
-			        }
-			      ],
-			      "unifierClass": null,
-			      "logicalName": "console",
-			      "recordingId": null,
-			      "counters": null,
-			      "metrics": {},
-			      "checkpointStartTime": "0",
-			      "checkpointTime": "0",
-			      "checkpointTimeMA": "0"
-			    },
-			    {
-			      "id": "8",
-			      "name": "hdfsSink",
-			      "className": "com.datatorrent.lib.io.ConsoleOutputOperator",
-			      "container": "container_1503210674869_0002_01_000002",
-			      "host": "quickstart.cloudera:36900",
-			      "totalTuplesProcessed": "617022",
-			      "totalTuplesEmitted": "0",
-			      "tuplesProcessedPSMA": "2000",
-			      "tuplesEmittedPSMA": "0",
-			      "cpuPercentageMA": "0.5325968799999999",
-			      "latencyMA": "6",
-			      "status": "ACTIVE",
-			      "lastHeartbeat": "1503292357878",
-			      "failureCount": "0",
-			      "recoveryWindowId": "6456590139547189847",
-			      "currentWindowId": "6456590139547189887",
-			      "ports": [
-			        {
-			          "name": "input",
-			          "type": "input",
-			          "totalTuples": "617022",
-			          "tuplesPSMA": "2000",
-			          "bufferServerBytesPSMA": "0",
-			          "queueSizeMA": "1001",
-			          "recordingId": null
-			        }
-			      ],
-			      "unifierClass": null,
-			      "logicalName": "console",
-			      "recordingId": null,
-			      "counters": null,
-			      "metrics": {},
-			      "checkpointStartTime": "0",
-			      "checkpointTime": "0",
-			      "checkpointTimeMA": "0"
-			    },
-			    {
-			      "id": "9",
-			      "name": "errorSink",
-			      "className": "com.datatorrent.lib.io.ConsoleOutputOperator",
-			      "container": "container_1503210674869_0002_01_000002",
-			      "host": "quickstart.cloudera:36900",
-			      "totalTuplesProcessed": "617022",
-			      "totalTuplesEmitted": "0",
-			      "tuplesProcessedPSMA": "2000",
-			      "tuplesEmittedPSMA": "0",
-			      "cpuPercentageMA": "0.5325968799999999",
-			      "latencyMA": "6",
-			      "status": "ACTIVE",
-			      "lastHeartbeat": "1503292357878",
-			      "failureCount": "0",
-			      "recoveryWindowId": "6456590139547189847",
-			      "currentWindowId": "6456590139547189887",
-			      "ports": [
-			        {
-			          "name": "input",
-			          "type": "input",
-			          "totalTuples": "617022",
-			          "tuplesPSMA": "2000",
-			          "bufferServerBytesPSMA": "0",
-			          "queueSizeMA": "1001",
-			          "recordingId": null
-			        }
-			      ],
+			      "recoveryWindowId": "6457759530292875187",
+			      "currentWindowId": "6457759530292875225",
+			      "ports": [{
+			        "name": "input",
+			        "type": "input",
+			        "totalTuples": "4032025",
+			        "tuplesPSMA": "1996",
+			        "bufferServerBytesPSMA": "0",
+			        "queueSizeMA": "1001",
+			        "recordingId": null
+			      }],
 			      "unifierClass": null,
 			      "logicalName": "console",
 			      "recordingId": null,
