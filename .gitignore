@@ -2,3 +2,7 @@ node_modules
 apexvisualizer/node_modules
 ./.project
 /.project
+.settings
+.jshintrc
+.npmignore
+.pydevproject
