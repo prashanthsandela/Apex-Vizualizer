@@ -6,3 +6,4 @@ apexvisualizer/node_modules
 .jshintrc
 .npmignore
 .pydevproject
+/npm-debug.log
