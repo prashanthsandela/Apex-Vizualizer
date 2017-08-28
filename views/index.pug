@@ -2,14 +2,22 @@ extends layout
 
 block content
 
-  <div class="live map live_map" style="height=300px;overflow: auto;">
-  <svg width='300' height='10000'><g/></svg>
-  </div>
-  
-  script(src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js")
-  script(src='/javascripts/d3.v3.min.js')
-  script(src='/javascripts/dagre-d3.min.js')    
+    nav(class='navbar navbar-expand-md navbar-dark fixed-top bg-dark')
+        a(class='navbar-brand' href='#') Apex Visualizer
+        form(onsubmit='get_app_details();return false;')
+            input(type="text" id='search' class='form-control mr-sm-2' placeholder="Search for Apex App")
+            input(type="submit" id='search_btn' class="btn btn-primary" value='Search')
 
-  script(src='/javascripts/script2.js')
- 
+        
+
+    div(class="live map live_map" style="height=300px;overflow: auto;  margin-top: 65px;")
+        <svg width='300' height='10000'><g/></svg>
   
+    script(src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js")
+    script(src='/javascripts/d3.v3.min.js')
+    script(src='/javascripts/dagre-d3.min.js')
+    script(src='/javascripts/popper.min.js')
+    script(src='/javascripts/typeahead.bundle.js')
+    script(src='/javascripts/bootstrap.min.js')       
+
+    script(src='/javascripts/script2.js')

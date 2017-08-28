@@ -2,6 +2,7 @@
 var canvas_height = function() { return $(window).height(); }
 var canvas_width = function() { return $('body').width(); }
 var canvas_id = "myCanvas";
+var refresh_secs = 3;
 
 console.log(" Window has been resized to : " + $(window).width() + " X " + $(window).height());
 $(window).resize(function(){
@@ -29,7 +30,7 @@ function add_canvas() {
 
 add_canvas();
 
-function parse_data() {
+function parse_data(data) {
 	var operators = {};
 	for(var i = 0; i < data.operators.length; i++) {
 		operators[data.operators[i].id] = data.operators[i]; 
@@ -44,8 +45,13 @@ function parse_data() {
 			if( !( key in workers )) {
 				workers[key] = {
 					"consumers" : 1,
-					"count" : operator.totalTuplesProcessed,
-					"inputThroughput": 50,
+					"count" : {
+					    "ttp" : operator.totalTuplesProcessed,
+					    "tte" : operator.totalTuplesEmitted,
+					    "ttps" : operator.tuplesProcessedPSMA,
+					    "ttes" : operator.tuplesEmittedPSMA
+					},
+					"inputThroughput": src_operator.tuplesEmittedPSMA,
 					"inputQueue" : [src_operator.id + '-' + src_operator.name],
 					"details" : operator
 				};
@@ -58,8 +64,13 @@ function parse_data() {
 	// Add a start worker
 	workers["0-Start"] = {
 			"consumers" : 1,
-			"count" : 0,
-			"inputThroughput": 50,
+			"count" : {
+                "ttp" : 0,
+                "tte" : 0,
+                "ttps" : 0,
+                "ttes" : 0
+            },
+			"inputThroughput": 0,
 	}
 	
 	// Add missing nodes
@@ -68,8 +79,13 @@ function parse_data() {
 		if ( !(key in workers) ) {
 			workers[key] = {
 				"consumers" : 1,
-				"count" : operators[operator].totalTuplesProcessed,
-				"inputThroughput": 50,
+				"count" : {
+                    "ttp" : operators[operator].totalTuplesProcessed,
+                    "tte" : operators[operator].totalTuplesEmitted,
+                    "ttps" : operators[operator].tuplesProcessedPSMA,
+                    "ttes" : operators[operator].tuplesEmittedPSMA
+                },
+				"inputThroughput": 0,
 				"details" : operators[operator],
 				"inputQueue" : ["0-Start"]
 			}
@@ -79,8 +95,8 @@ function parse_data() {
 	return workers;
 }
 
-function process() {
-	var workers = parse_data();
+function create_graph(data) {
+	var workers = parse_data(data);
 
 	  // Set up zoom support
 	  var svg = d3.select("svg"),
@@ -90,7 +106,7 @@ function process() {
 	  // Left-to-right layout
 	  var g = new dagreD3.graphlib.Graph();
 	  g.setGraph({
-	    nodesep: 7,
+	    nodesep: 70,
 	    ranksep: 50,
 	    rankdir: "TD",
 	    marginx: 100,
@@ -101,148 +117,108 @@ function process() {
 	    for (var id in workers) {
 	      var worker = workers[id];
 	      var className = worker.consumers ? "running" : "stopped";
-	  if (worker.count > 10000) {
-	    className += " warn";
-	  }
-	  var html = "<div>";
-	  html += "<span class=status></span>";
-	  html += "<span class=name>"+id+"</span>";
-	  html += "<span class=queue><span class=counter>"+worker.count+"</span></span>";
-	  html += "</div>";
-	  g.setNode(id, {
-	    labelType: "html",
-	    label: html,
-	    rx: 5,
-	    ry: 5,
-	    padding: 0,
-	    class: className
-	  });
+    	  if (worker.count > 10000) {
+    	    className += " warn";
+    	  }
+    	  var html = "<div>";
+    	  html += "<span class=status></span>";
+    	  html += "<span class=name>"+id+"</span>";
+    	  html += "<span class=queue><span class=counter>" +
+    	  		"<span class='orange' title='Total Tuples Processed'>TP:</span> "+worker.count.ttp+"" +
+    	  		"&nbsp;&nbsp;<span class='orange' title='Total Tuples Emitted'>TE: </span>"+worker.count.tte+"" +
+  				"</span>";
+    	  html += "</div>";
+    	  g.setNode(id, {
+    	    labelType: "html",
+    	    label: html,
+    	    rx: 5,
+    	    ry: 5,
+    	    padding: 0,
+    	    height: 45,
+    	    class: className
+    	  });
 	
-	  if (worker.inputQueue) {
-	    worker.inputQueue.forEach( function(s) {
-	      g.setEdge(s, id, {
-	        label: worker.inputThroughput + "/s",
-	            width: 40
-	          });  
-	        });
+    	  if (worker.inputQueue) {
+    	    worker.inputQueue.forEach( function(s) {
+    	      g.setEdge(s, id, {
+    	        label: worker.inputThroughput + "/s",
+    	            width: 40
+    	          });  
+    	        });
 	      }
 	    }
 	
 	    inner.call(render, g);
 	
 	  }
-
-			  // Do some mock queue status updates
-//			  setInterval(function() {
-//			    var stoppedWorker1Count = workers["elasticsearch-writer"].count;
-//			    var stoppedWorker2Count = workers["meta-enricher"].count;
-//			    for (var id in workers) {
-//			      workers[id].count = Math.ceil(Math.random() * 3);
-//			      if (workers[id].inputThroughput) workers[id].inputThroughput = Math.ceil(Math.random() * 250);
-//			    }
-//			    workers["elasticsearch-writer"].count = stoppedWorker1Count + Math.ceil(Math.random() * 100);
-//			    workers["meta-enricher"].count = stoppedWorker2Count + Math.ceil(Math.random() * 100);
-//			    draw(true);
-//			  }, 1000);
-//
-//			  // Do a mock change of worker configuration
-//			  setInterval(function() {
-//			    workers["elasticsearch-monitor"] = {
-//			      "consumers": 0,
-//			      "count": 0,
-//			      "inputQueue": ["elasticsearch-writer"],
-//			      "inputThroughput": 50
-//			    }
-//			  }, 5000);
-
-			  draw();
+	  draw();
+	
 }
 
-var data =  {
-		  "streams": [{
-			    "logicalName": "randomData",
-			    "source": {
-			      "operatorId": "1",
-			      "portName": "out"
-			    },
-			    "sinks": [{
-			      "operatorId": "2",
-			      "portName": "input"
-			    }],
-			    "locality": "CONTAINER_LOCAL"
-			  }],
-			  "operators": [
-			    {
-			      "id": "1",
-			      "name": "randomGenerator",
-			      "className": "com.example.myapexapp.RandomNumberGenerator",
-			      "container": "container_1503559012660_0001_01_000002",
-			      "host": "quickstart.cloudera:53884",
-			      "totalTuplesProcessed": "0",
-			      "totalTuplesEmitted": "4032025",
-			      "tuplesProcessedPSMA": "0",
-			      "tuplesEmittedPSMA": "1998",
-			      "cpuPercentageMA": "0.15172656609051854",
-			      "latencyMA": "0",
-			      "status": "ACTIVE",
-			      "lastHeartbeat": "1503566336429",
-			      "failureCount": "0",
-			      "recoveryWindowId": "6457759530292875187",
-			      "currentWindowId": "6457759530292875225",
-			      "ports": [{
-			        "name": "out",
-			        "type": "output",
-			        "totalTuples": "4032025",
-			        "tuplesPSMA": "1998",
-			        "bufferServerBytesPSMA": "0",
-			        "queueSizeMA": "0",
-			        "recordingId": null
-			      }],
-			      "unifierClass": null,
-			      "logicalName": "randomGenerator",
-			      "recordingId": null,
-			      "counters": null,
-			      "metrics": {},
-			      "checkpointStartTime": "1503566317397",
-			      "checkpointTime": "16",
-			      "checkpointTimeMA": "17"
-			    },
-			    {
-			      "id": "2",
-			      "name": "console",
-			      "className": "com.datatorrent.lib.io.ConsoleOutputOperator",
-			      "container": "container_1503559012660_0001_01_000002",
-			      "host": "quickstart.cloudera:53884",
-			      "totalTuplesProcessed": "4032025",
-			      "totalTuplesEmitted": "0",
-			      "tuplesProcessedPSMA": "1996",
-			      "tuplesEmittedPSMA": "0",
-			      "cpuPercentageMA": "0.6623600119784387",
-			      "latencyMA": "4",
-			      "status": "ACTIVE",
-			      "lastHeartbeat": "1503566336429",
-			      "failureCount": "0",
-			      "recoveryWindowId": "6457759530292875187",
-			      "currentWindowId": "6457759530292875225",
-			      "ports": [{
-			        "name": "input",
-			        "type": "input",
-			        "totalTuples": "4032025",
-			        "tuplesPSMA": "1996",
-			        "bufferServerBytesPSMA": "0",
-			        "queueSizeMA": "1001",
-			        "recordingId": null
-			      }],
-			      "unifierClass": null,
-			      "logicalName": "console",
-			      "recordingId": null,
-			      "counters": null,
-			      "metrics": {},
-			      "checkpointStartTime": "0",
-			      "checkpointTime": "0",
-			      "checkpointTimeMA": "0"
-			    }
-			  ]
-			};
-process();
 
+var app_data = {};
+var refreshGraph;
+
+// Get chosen app details
+function refresh_app_data() {
+    var app_id = app_data[$('#search').val()];
+    $.get('app_data?app_id=' + app_id, function(data) {
+        create_graph(data);
+    });
+}
+
+function get_app_details() {
+    
+    if( $('#search').val() == '' ) {
+        alert("Invalid application name");
+        clearTimeout(refreshGraph);
+        return false;
+    }
+    
+    refresh_app_data();
+	clearTimeout(refreshGraph);
+	refreshGraph = setTimeout(function() {
+		get_app_details();
+	}, refresh_secs * 1000);
+    
+    return false;
+}
+
+// Get app names
+$.get("all_apps", function(data, status) {
+	$('#search').typeahead({
+	  hint: true,
+	  highlight: true,
+	  minLength: 1 
+	},
+	{
+	  name: 'data',
+	  source: substringMatcher(data)
+	});
+	
+	$.each(data, function (i, str) {
+		app_data[str.name] = str.id;
+	});
+});
+
+var substringMatcher = function(strs) {
+	  return function findMatches(q, cb) {
+	    var matches, substringRegex;
+
+	    // an array that will be populated with substring matches
+	    matches = [];
+
+	    // regex used to determine if a string contains the substring `q`
+	    substrRegex = new RegExp(q, 'i');
+
+	    // iterate through the pool of strings and for any string that
+	    // contains the substring `q`, add it to the `matches` array
+	    $.each(strs, function(i, str) {
+	      if (substrRegex.test(str.name)) {
+	        matches.push(str.name);
+	      }
+	    });
+
+	    cb(matches);
+	  };
+	};
