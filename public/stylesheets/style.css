@@ -319,3 +319,16 @@ p + p {
 	color: orange;
 	font-weight: 500;
 }
+
+.fixed-top {
+	position: static
+}
+
+#stats_table th:hover, #stats_table tr:hover {
+	cursor: pointer;
+}
+
+
+#stats_table .apps:hover {
+	background-color: #deeff7;
+}

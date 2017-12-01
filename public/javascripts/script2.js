@@ -2,7 +2,8 @@
 var canvas_height = function() { return $(window).height(); }
 var canvas_width = function() { return $('body').width(); }
 var canvas_id = "myCanvas";
-var refresh_secs = 3;
+var refresh_secs = 2;
+var heartbeats = {};
 
 console.log(" Window has been resized to : " + $(window).width() + " X " + $(window).height());
 $(window).resize(function(){
@@ -155,16 +156,89 @@ function create_graph(data) {
 	
 }
 
+function stats_table(data) {
+    data = data;
+    $("#stats_table").find(".apps").remove();
+    for(x in data['operators']) {
+        x = data['operators'][x];
+        var d = new Date(0);
+        var heartbeat_mc = 0;
+        d.setUTCMilliseconds(x['lastHeartbeat']);
+        var heartbeats_id = x['id'] + "-" + x['container'];
+        
+        if( heartbeats[heartbeats_id] == undefined ) {
+            heartbeat_mc = x['lastHeartbeat'] - x['container'];
+            heartbeats[heartbeats_id] = {
+                    "ms" : x['lastHeartbeat'],
+                    "factor" : 0
+                };
+        } else if ( heartbeats[heartbeats_id] == x['lastHeartbeat']) {
+            heartbeats[heartbeats_id]["factor"] += refresh_secs;
+            heartbeats_mc = heartbeats[heartbeats_id]["factor"];
+        } else {
+            heartbeats_mc = x['lastHeartbeat'] - heartbeats[heartbeats_id]["ms"];
+            heartbeats[heartbeats_id] =  {
+                    "ms" : x['lastHeartbeat'],
+                    "factor" : 0
+                };
+        }
+
+            
+        var warning_class = "";
+        
+        if ( x['latencyMA'] >= 15000 
+                || heartbeats_mc >= 15000 
+                || x['cpuPercentageMA'] > 90) {
+            warning_class = "table-danger"
+        } else if ( x['latencyMA'] >= 7000 
+                || heartbeats_mc >= 10000 
+                || x['cpuPercentageMA'] > 80) {
+            warning_class = "table-warning"
+        }
+        
+        $("#stats_table").append(function() {
+            return "<tr class='apps " + warning_class +"'>" +
+                    "<td>" + x['id'] + "-" + x['name'] +"</td>" +
+                    "<td>" + x['totalTuplesProcessed'] +"</td>" +
+                    "<td>" + x['totalTuplesEmitted'] +"</td>" +
+                    "<td>" + x['tuplesProcessedPSMA'] +"</td>" +
+                    "<td>" + x['tuplesEmittedPSMA'] +"</td>" +
+                    "<td>" + 
+                        parseFloat(Math.round(x['cpuPercentageMA'] * 100) / 100).toFixed(2) + "%"
+                    +"</td>" +
+                    "<td>" + x['latencyMA'] +"</td>" +
+                    "<td>" + x['status'] +"</td>" +
+                    "<td>" + format_date(d)  +"</td>" + 
+                    "<td>" + heartbeats_mc/1000 + "</td>"
+                    ;
+        });
+    }
+    
+}
+
+function format_date(d) {
+    return ((d.getMonth()+1) <= 9 ? "0" + (d.getMonth()+1) : (d.getMonth()+1)) +'-'+
+            (d.getDate() <= 9 ? "0" + d.getDate() : d.getDate()) +'-'+
+            d.getFullYear()+' '+ 
+            (d.getHours() <= 9 ? "0" + d.getHours() : d.getHours()) +'-'+
+            (d.getMinutes() <= 9 ? "0" + d.getMinutes() : d.getMinutes()) +'-'+
+            (d.getSeconds() <= 9 ? "0" + d.getSeconds() : d.getSeconds());
+}
 
 var app_data = {};
 var refreshGraph;
+var app_physical_plan = [];
+
 
 // Get chosen app details
 function refresh_app_data() {
+    $("#loading_img").css("display", "block");
     var app_id = app_data[$('#search').val()];
     $.get('app_data?app_id=' + app_id, function(data) {
+        stats_table(data);
         create_graph(data);
     });
+    $("#loading_img").css("display", "none");
 }
 
 function get_app_details() {
@@ -222,3 +296,4 @@ var substringMatcher = function(strs) {
 	    cb(matches);
 	  };
 	};
+	

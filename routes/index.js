@@ -16,17 +16,35 @@ router.get('/app_data', function(req, res) {
 			var http = require("http");
 			var url = config.get("yarn_url")
 					+ "/proxy/" + app_id + "/ws/v2/stram/physicalPlan";
+//			if (! url.match(/^https:/g)) {
+//			    http = require("https")
+//			} else {
+//			    http = require("http")
+//			}
 			var request = http.get(url, function(response) {
-				var buffer = "", data;
+			    try {
+			        var buffer = "", data;
 
-				response.on("data", function(chunk) {
-					buffer += chunk;
-				});
+	                response.on("data", function(chunk) {
+	                    buffer += chunk;
+	                });
 
-				response.on("end", function(err) {
-					data = JSON.parse(buffer);
-					res.send(data)
-				});
+	                response.on("end", function(err) {
+	                    try {
+	                        data = JSON.parse(buffer);
+	                        res.send(data)
+	                    } catch(e) {
+	                        console.log("Unable to fetch data from " + url + "; Error: " + e);
+	                        res.send({"error" : "Unable to fetch data from " + url + "; Error: " + e});
+	                    }
+	                    
+	                });
+			    }
+			    catch (e) {
+			        console.log("Unable to fetch data from " + url + "; Error: " + e);
+			        res.send({"error" : "Unable to fetch data from " + url + "; Error: " + e});
+			    }
+				
 			});
 		} else {
 			console.log({"error" : "Invalid request type " + req.method})
@@ -43,7 +61,13 @@ router.get('/app_data', function(req, res) {
 // Get all running app names
 router.get("/all_apps", function(req, res) {
 	var http = require("http");
-	var url = config.get("yarn_url") + "/ws/v1/cluster/apps?states=RUNNING";
+	var url = config.get("yarn_url") + "/ws/v1/cluster/apps?states=RUNNING&applicationTypes=ApacheApex";
+//	if (! url.match(/^https:/g)) {
+//        http = require("https")
+//    } else {
+//        http = require("http")
+//    }
+	
 	var request = http.get(url, function(response) {
 		var buffer = "", data;
 
@@ -73,7 +97,7 @@ router.get("/all_apps", function(req, res) {
 
 		});
 	}).on("error", function(e) {
-		console.log("Invalid response for url : " + url);
+		console.log("Invalid response for url : " + url + "; Error: " + e);
 		res.send({"error" : "Invalid response for url: " + url});
 	});
 

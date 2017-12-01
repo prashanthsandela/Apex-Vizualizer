@@ -7,9 +7,27 @@ block content
         form(onsubmit='get_app_details();return false;')
             input(type="text" id='search' class='form-control mr-sm-2' placeholder="Search for Apex App")
             input(type="submit" id='search_btn' class="btn btn-primary" value='Search')
+    
+    span
+        img(id='loading_img' src="images/loading.gif" style="width: 55px;float: right;display:none;")
 
-        
-
+    br
+    
+    div( class = 'container')
+        table( class='table table-bordered table-sm' id='stats_table')
+            thead( class="thead-default")
+                tr
+                   th(title="ID - Name of the operator") Name
+                   th(title="Total tuples processed") TTP
+                   th(title="Total tuples emitted")  TTE
+                   th(title="Tuples processed per second moving average") TPSMA
+                   th(title="Tuples emitted per second moving average") TESMA
+                   th(title="CPU utilization") CPU %
+                   th(title="Latency in ms") Latency(ms)
+                   th(title="Status of current operator") Status
+                   th(title="Last heart beat recieved time in local time") Last heart beat time
+                   th(title="Time difference(sec) between current and previous heartbeat ") Last heart beat sec
+               
     div(class="live map live_map" style="height=300px;overflow: auto;  margin-top: 65px;")
         <svg width='300' height='10000'><g/></svg>
   
