@@ -332,3 +332,7 @@ p + p {
 #stats_table .apps:hover {
 	background-color: #deeff7;
 }
+
+#stats_table {
+	display: none;
+}

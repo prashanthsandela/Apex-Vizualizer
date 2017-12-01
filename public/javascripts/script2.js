@@ -197,6 +197,7 @@ function stats_table(data) {
         }
         
         $("#stats_table").append(function() {
+            $(this).css("display", "block");
             return "<tr class='apps " + warning_class +"'>" +
                     "<td>" + x['id'] + "-" + x['name'] +"</td>" +
                     "<td>" + x['totalTuplesProcessed'] +"</td>" +
