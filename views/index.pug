@@ -5,15 +5,27 @@ block content
     nav(class='navbar navbar-expand-md navbar-dark fixed-top bg-dark')
         a(class='navbar-brand' href='#') Apex Visualizer
         form(onsubmit='get_app_details();return false;')
-            input(type="text" id='search' class='form-control mr-sm-2' placeholder="Search for Apex App")
+            input(type="text" id='search' class='form-control mr-sm-2' placeholder="Search for Apex App") 
+            span(style = "font-size: 20px; color: white") &nbsp;&nbsp;&nbsp; Env: 
+            select(id='app_env')
+              each val in envs
+                option= val
+
             input(type="submit" id='search_btn' class="btn btn-primary" value='Search')
-    
+
     span
         img(id='loading_img' src="images/loading.gif" style="width: 55px;float: right;display:none;")
 
-    br
-    
-    div( class = 'container')
+    div( class='app_details' style = 'padding: 15px 30px; display: none;')
+        span
+          b Application name: &nbsp;
+        span(class='app_name')
+        span(class='app_stram'  style="padding-left: 30px")
+          a(href='' target='_blank') Stram
+        span(class='app_physical_plan' style="padding-left: 30px")
+          a(href='' target='_blank') Physical plan
+        br
+        br
         table( class='table table-bordered table-sm' id='stats_table')
             thead( class="thead-default")
                 tr
@@ -27,15 +39,16 @@ block content
                    th(title="Status of current operator") Status
                    th(title="Last heart beat recieved time in local time") Last heart beat time
                    th(title="Time difference(sec) between current and previous heartbeat ") Last heart beat sec
-               
+                   th(title="Logs") Logs
+
     div(class="live map live_map" style="height=300px;overflow: auto;  margin-top: 65px;")
         <svg width='300' height='10000'><g/></svg>
-  
+
     script(src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js")
     script(src='/javascripts/d3.v3.min.js')
     script(src='/javascripts/dagre-d3.min.js')
     script(src='/javascripts/popper.min.js')
     script(src='/javascripts/typeahead.bundle.js')
-    script(src='/javascripts/bootstrap.min.js')       
+    script(src='/javascripts/bootstrap.min.js')
 
     script(src='/javascripts/script2.js')

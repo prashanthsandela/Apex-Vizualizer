@@ -1,14 +1,14 @@
 
   body {
     /* position: fixed; */
-    top: 0;
+    background: #000;
     bottom: 0;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serf;
     left: 0;
-    right: 0;
     margin: 0;
     padding: 0;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serf;
-    background: #000;
+    right: 0;
+    top: 0;
   }
 
 
@@ -42,8 +42,8 @@
   }
 
   .live.map {
-    width: 100%;
     overflow: auto;
+    width: 100%;
   }
 
   svg {
@@ -138,7 +138,7 @@
     stroke-width: 1.5px;
     fill: #999;
   }
-  
+
   /* scaffolding */
 /* ----------- */
 
@@ -311,28 +311,34 @@ p + p {
 }
 
 #search_btn {
-	margin-left: 10px !important;
+  margin-left: 10px !important;
 }
 
 .orange {
-	padding-left: 15px;
-	color: orange;
-	font-weight: 500;
+  padding-left: 15px;
+  color: orange;
+  font-weight: 500;
 }
 
 .fixed-top {
-	position: static
+  position: static
 }
 
 #stats_table th:hover, #stats_table tr:hover {
-	cursor: pointer;
+  cursor: pointer;
 }
 
 
 #stats_table .apps:hover {
-	background-color: #deeff7;
+  background-color: #deeff7;
 }
 
 #stats_table {
-	display: none;
+  display: none;
+}
+
+
+select#app_env {
+    width: 20%;
+    display: initial;
 }

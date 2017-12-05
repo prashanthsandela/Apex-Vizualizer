@@ -1,3 +1,28 @@
+/*
+ To add more environments, specify the environment name
+ and add yarn_url. At least one environment is required.
+ Eg:
+ {
+   "env" : {
+       "default" : "prod",
+       "prod" : {
+         "yarn_url" : "http://localhost:8088"
+       },
+       "stage" : {
+         "yarn_url" : "http://stage.local:8088"
+       }
+     }
+   }
+*/
+
 {
-	"yarn_url" : "http://localhost:8088"
+  "env" : {
+    "default" : "prod",
+    "prod" : {
+      "yarn_url" : "http://localhost:8088"
+    },
+    "stage" : {
+      "yarn_url" : "http://localhost1223:8088"
+    }
+  }
 }
