@@ -14,8 +14,8 @@ mple for adding more config.
 
 #### Add more configurations:
 
-All the configurations can be added in config/default.json. With the current impl
-mentation only default.json is supported. These configurations will appear in
+All the configurations can be added in `config/default.json`. With the current 
+implementation only default.json is supported. These configurations will appear in
 the drop down in the UI.
 
 Add configurations:
