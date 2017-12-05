@@ -30,4 +30,4 @@ Add configurations:
       }
     }
 
-**SSL enabled url's are not supported in current version.**
+**No certificates are supplied for SSL enabled url's in current version.**
