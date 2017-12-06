@@ -3,18 +3,22 @@ extends layout
 block content
 
     nav(class='navbar navbar-expand-md navbar-dark fixed-top bg-dark')
-        a(class='navbar-brand' href='#') Apex Visualizer
-        form(onsubmit='get_app_details();return false;')
-            input(type="text" id='search' class='form-control mr-sm-2' placeholder="Search for Apex App") 
-            span(style = "font-size: 20px; color: white") &nbsp;&nbsp;&nbsp; Env: 
-            select(id='app_env')
-              each val in envs
-                option= val
+        a(class='navbar-brand' href='/') Apex Visualizer
+        form(onsubmit='get_app_details();' style="width: 100%;")
+          span(style = "font-size: 20px; color: white") &nbsp;&nbsp;&nbsp; Env: 
+          select(id='app_env' class='form-control' name='env' style="width: 20%")
+            each val in envs
+              option= val
+          span &nbsp;&nbsp;&nbsp;
+          input(type="text" id='search' name='app_id' class='form-control mr-sm-2' placeholder="Search for Apex App") 
+            
 
-            input(type="submit" id='search_btn' class="btn btn-primary" value='Search')
+          input(type="submit" id='search_btn' class="btn btn-primary" value='Search')
 
+    div(class = 'all_running_apps')
+      
     span
-        img(id='loading_img' src="images/loading.gif" style="width: 55px;float: right;display:none;")
+        img(id='loading_img' src="images/loading.gif" style="width: 55px;float: right; display:none;")
 
     div( class='app_details' style = 'padding: 15px 30px; display: none;')
         span
@@ -26,7 +30,7 @@ block content
           a(href='' target='_blank') Physical plan
         br
         br
-        table( class='table table-bordered table-sm' id='stats_table')
+        table( class='table table-bordered table-sm display_tables' id='stats_table' )
             thead( class="thead-default")
                 tr
                    th(title="ID - Name of the operator") Name
@@ -44,7 +48,7 @@ block content
     div(class="live map live_map" style="height=300px;overflow: auto;  margin-top: 65px;")
         <svg width='300' height='10000'><g/></svg>
 
-    script(src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js")
+    script(src="/javascripts/jquery.min.js")
     script(src='/javascripts/d3.v3.min.js')
     script(src='/javascripts/dagre-d3.min.js')
     script(src='/javascripts/popper.min.js')

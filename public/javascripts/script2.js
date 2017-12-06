@@ -9,14 +9,42 @@ var app_user = "";
 var apps = {};
 var yarn_url = "";
 
-console.log(" Window has been resized to : " + $(window).width() + " X " + $(window).height());
+// Method from http://www.jquerybyexample.net/2012/06/get-url-parameters-using-jquery.html
+function GetURLParameter(sParam)
+{
+    var sPageURL = window.location.search.substring(1);
+    var sURLVariables = sPageURL.split('&');
+    for (var i = 0; i < sURLVariables.length; i++)
+    {
+        var sParameterName = sURLVariables[i].split('=');
+        if (sParameterName[0] == sParam)
+        {
+            return sParameterName[1];
+        }
+    }
+}
+
+// Method from  https://stackoverflow.com/questions/1090948/change-url-parameters
+function replaceQueryParam(param, newval, search) {
+    var regex = new RegExp("([?;&])" + param + "[^&;]*[;&]?");
+    var query = search.replace(regex, "$1").replace(/&$/, '');
+
+    return (query.length > 2 ? query + "&" : "?") + (newval ? param + "=" + newval : '');
+}
+
+// Get arguments
+var param_app_id = GetURLParameter('app_id');
+var param_env = GetURLParameter('env');
+
+if( param_app_id != undefined && param_app_id != "" && param_app_id != null) {
+  $('#search').val(param_app_id);
+  if (param_env != undefined && param_env != null && param_env != null) {
+    $('#app_env').val(param_env)
+  }
+  get_app_details(param_app_id);
+}
+
 $(window).resize(function(){
- console.log(" Window has been resized to : " + $(window).width() + " X " + $(window).height());
-
-// // Calculate new canvas boundaries
-// canvas_height = $('body').height();
-// canvas_width = $('body').width();
-
  // Add canvas div tag
  $("#" + canvas_id).remove();
  add_canvas();
@@ -166,7 +194,7 @@ function stats_table(data) {
     for(x in data['operators']) {
         x = data['operators'][x];
         var d = new Date(0);
-        var heartbeat_mc = 0;
+        var heartbeats_mc = 0;
         d.setUTCMilliseconds(x['lastHeartbeat']);
         var heartbeats_id = x['id'] + "-" + x['container'];
 
@@ -232,27 +260,36 @@ function format_date(d) {
             (d.getSeconds() <= 9 ? "0" + d.getSeconds() : d.getSeconds());
 }
 
-var app_data = {};
+var app_data_name = {};
+var app_data_id = {};
 var refreshGraph;
 var app_physical_plan = [];
 
 
 // Get chosen app details
-function refresh_app_data() {
+function refresh_app_data(curr_app_id) {
     $("#loading_img").css("display", "block");
-    var tmp_app_id = app_data[$('#search').val()];
+    var tmp_app_id =  "";
+
+    if ( curr_app_id != undefined ) {
+      tmp_app_id = curr_app_id;
+    } else {
+      tmp_app_id = app_data_name[$('#search').val()];
+    }
+
 
     // New application
     if ( app_id != tmp_app_id || app_user == "") {
       extract_app_details(tmp_app_id);
       app_id = tmp_app_id;
-      $('.app_name').append($('#search').val());
+      $('.app_name').html($('#search').val());
       $('.app_physical_plan a').prop("href", "app_data?app_id=" + tmp_app_id);
     }
 
     $.get('app_data?app_id=' + tmp_app_id + "&env=" + $("#app_env").val(), function(data) {
         stats_table(data);
         create_graph(data);
+        $('.all_running_apps').css('display', 'none');
         $('.app_details').css('display', 'block');
         $("#loading_img").css("display", "none");
     }).fail(function() {
@@ -269,38 +306,98 @@ function extract_app_details(app_id) {
  });
 }
 
-function get_app_details() {
+function get_app_details(curr_app_id) {
 
-    if( $('#search').val() == '' ) {
-        alert("Invalid application name");
-        clearTimeout(refreshGraph);
-        return false;
-    }
+  if(curr_app_id == undefined) {
+    $('#search').val(app_data_name[$('#search').val()]);
+  }
 
-    refresh_app_data();
- clearTimeout(refreshGraph);
- refreshGraph = setTimeout(function() {
-  get_app_details();
- }, refresh_secs * 1000);
-
+  if( $('#search').val() == '' ) {
+    alert("Invalid application name");
+    clearTimeout(refreshGraph);
     return false;
+  }
+
+  refresh_app_data(curr_app_id);
+  clearTimeout(refreshGraph);
+  refreshGraph = setTimeout(function() {
+  get_app_details(curr_app_id);
+  }, refresh_secs * 1000);
+
+  return false;
 }
 
-// Get app names
-$.get("all_apps" + "?env=" + $("#app_env").val(), function(data, status) {
- $('#search').typeahead({
-   hint: true,
-   highlight: true,
-   minLength: 1
- },
- {
-   name: 'data',
-   source: substringMatcher(data)
- });
+function fill_running_apps(data) {
+  var yarn_url = data.yarn_url;
+  var data = data.apps.app;
+  var html = "<span>All running apps in env: " + $("#app_env").val() + "</span>"
+  html += "<table class='table table-bordered table-sm display_tables' id='running_apps_table'>";
+  html += "<thead class='thead-default'>";
+  html += "<tr>";
+  html += "<th>Application id</th>";
+  html += "<th>Application name</th>";
+  html += "<th>Start time</th>";
+  html += "<th>Elapsed time</th>";
+  html += "<th>Allocated MB</th>";
+  html += "<th>AllocatedVCores</th>";
+  html += "<th>Running containers</th>";
+  html += "<th>Stram</th>";
+  html += "</tr>";
+  html += "</thead>";
 
- $.each(data, function (i, str) {
-  app_data[str.name] = str.id;
- });
+  for(var i = 0; i < data.length; i++) {
+    html += "<tr>";
+    html += "<td><a href='?app_id=" + data[i].id + "&env=" + $("#app_env").val() + "'>" + data[i].id + "</a></td>";
+    html += "<td>" + data[i].name + "</td>";
+    html += "<td>" + format_date(new Date(data[i].startedTime)) + "</td>";
+    html += "<td>" + data[i].elapsedTime + "</td>";
+    html += "<td>" + data[i].allocatedMB + "</td>";
+    html += "<td>" + data[i].allocatedVCores + "</td>";
+    html += "<td>" + data[i].runningContainers + "</td>";
+    html += "<td><a href='" + yarn_url + "/cluster/app/" + data[i].id + "' target='_blank'>Stram</a></td>";
+    html += "</tr>";
+  }
+
+  html += "</table>"
+
+  html += "</table>";
+  $(".all_running_apps").html(html);
+}
+// Get app names
+var get_all_apps = function() {
+
+  $.get("all_apps" + "?env=" + $("#app_env").val(), function(data, status) {
+    fill_running_apps(data);
+
+   $('#search').typeahead({
+     hint: true,
+     highlight: true,
+     minLength: 1
+   },
+   {
+     name: 'data',
+     source: substringMatcher(data)
+   });
+    app_data_name = [];
+    app_data_id = [];
+   $.each(data.apps.app, function (i, str) {
+    app_data_name[str.name] = str.id;
+    app_data_id[str.id] = str.name;
+   });
+
+   // Add app name
+   if ( $('#search').val() != "") {
+      $('.app_name').html(app_data_id[$('#search').val()]);
+      $('#search').val(app_data_id[$('#search').val()]);
+   }
+
+  });
+}
+
+get_all_apps();
+
+$("#app_env").on("change", function() {
+  get_all_apps();
 });
 
 var substringMatcher = function(strs) {
@@ -315,7 +412,7 @@ var substringMatcher = function(strs) {
 
      // iterate through the pool of strings and for any string that
      // contains the substring `q`, add it to the `matches` array
-     $.each(strs, function(i, str) {
+     $.each(strs.apps.app, function(i, str) {
        if (substrRegex.test(str.name)) {
          matches.push(str.name);
        }

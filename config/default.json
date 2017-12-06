@@ -22,7 +22,7 @@
       "yarn_url" : "http://localhost:8088"
     },
     "stage" : {
-      "yarn_url" : "http://localhost1223:8088"
+      "yarn_url" : "http://localhost:8088"
     }
   }
 }

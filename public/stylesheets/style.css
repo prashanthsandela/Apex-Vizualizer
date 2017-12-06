@@ -324,16 +324,16 @@ p + p {
   position: static
 }
 
-#stats_table th:hover, #stats_table tr:hover {
+.display_tables th:hover, .display_tables tr:hover {
   cursor: pointer;
 }
 
 
-#stats_table .apps:hover {
+.display_tables .apps:hover {
   background-color: #deeff7;
 }
 
-#stats_table {
+.display_tables {
   display: none;
 }
 
@@ -341,4 +341,12 @@ p + p {
 select#app_env {
     width: 20%;
     display: initial;
+}
+
+#running_apps_table {
+  display: block;
+}
+
+.app_details, .all_running_apps {
+  padding: 15px 30px;
 }
