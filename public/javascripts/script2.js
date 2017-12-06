@@ -312,7 +312,7 @@ function get_app_details(curr_app_id) {
     $('#search').val(app_data_name[$('#search').val()]);
   }
 
-  if( $('#search').val() == '' ) {
+  if( $('#search').val() == '' && curr_app_id == undefined) {
     alert("Invalid application name");
     clearTimeout(refreshGraph);
     return false;
@@ -372,7 +372,8 @@ var get_all_apps = function() {
    $('#search').typeahead({
      hint: true,
      highlight: true,
-     minLength: 1
+     minLength: 1,
+     overwrite: true
    },
    {
      name: 'data',
