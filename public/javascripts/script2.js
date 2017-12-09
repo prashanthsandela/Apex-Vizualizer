@@ -2,16 +2,19 @@
 var canvas_height = function() { return $(window).height(); }
 var canvas_width = function() { return $('body').width(); }
 var canvas_id = "myCanvas";
-var refresh_secs = 2;
+var refresh_secs = 300;
 var heartbeats = {};
 var app_id = "";
 var app_user = "";
 var apps = {};
 var yarn_url = "";
+var app_data_name = {};
+var app_data_id = {};
+var refreshGraph;
+var app_physical_plan = [];
 
 // Method from http://www.jquerybyexample.net/2012/06/get-url-parameters-using-jquery.html
-function GetURLParameter(sParam)
-{
+function GetURLParameter(sParam){
     var sPageURL = window.location.search.substring(1);
     var sURLVariables = sPageURL.split('&');
     for (var i = 0; i < sURLVariables.length; i++)
@@ -48,10 +51,6 @@ $(window).resize(function(){
  // Add canvas div tag
  $("#" + canvas_id).remove();
  add_canvas();
-});
-
-$("body").mousemove(function(event) {
-// console.log("Cursor position: " + event.pageX + ", " + event.pageY);
 });
 
 function add_canvas() {
@@ -139,8 +138,8 @@ function create_graph(data) {
    // Left-to-right layout
    var g = new dagreD3.graphlib.Graph();
    g.setGraph({
-     nodesep: 70,
-     ranksep: 50,
+     nodesep: 10,
+     ranksep: 30,
      rankdir: "TD",
      marginx: 100,
      marginy: 20
@@ -164,10 +163,11 @@ function create_graph(data) {
        g.setNode(id, {
          labelType: "html",
          label: html,
-         rx: 5,
-         ry: 5,
+         rx: 0,
+         ry: 0,
          padding: 0,
-         height: 45,
+         height: 40,
+         width: 170,
          class: className
        });
 
@@ -228,7 +228,7 @@ function stats_table(data) {
         }
 
         $("#stats_table").append(function() {
-            $(this).css("display", "block");
+            $(this).css("display", "table");
             return "<tr class='apps " + warning_class +"'>" +
                     "<td>" + x['id'] + "-" + x['name'] +"</td>" +
                     "<td>" + x['totalTuplesProcessed'] +"</td>" +
@@ -259,12 +259,6 @@ function format_date(d) {
             (d.getMinutes() <= 9 ? "0" + d.getMinutes() : d.getMinutes()) +'-'+
             (d.getSeconds() <= 9 ? "0" + d.getSeconds() : d.getSeconds());
 }
-
-var app_data_name = {};
-var app_data_id = {};
-var refreshGraph;
-var app_physical_plan = [];
-
 
 // Get chosen app details
 function refresh_app_data(curr_app_id) {
@@ -330,7 +324,7 @@ function get_app_details(curr_app_id) {
 function fill_running_apps(data) {
   var yarn_url = data.yarn_url;
   var data = data.apps.app;
-  var html = "<span>All running apps in env: " + $("#app_env").val() + "</span>"
+  var html = "<span>All running apps in env: <b>" + $("#app_env").val() + "</b></span>"
   html += "<table class='table table-bordered table-sm display_tables' id='running_apps_table'>";
   html += "<thead class='thead-default'>";
   html += "<tr>";
