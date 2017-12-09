@@ -1,6 +1,7 @@
-# Apex Visualizer (For Apache Apex)
+# Apex Visualizer (For Apache Apex DAG Visualizer)
 
-Apex Visualizer is a visualizer for [Apache Apex](http://apex.apache.org/) for representing dag and usage metrics.
+Apex Visualizer is a visualizer for [Apache Apex](http://apex.apache.org/) for representing dag and usage metrics. 
+This project doesn't need to be installed on edge node and without any restrictions.
 
 #### Start the project
 
