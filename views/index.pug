@@ -1,0 +1,54 @@
+extends layout
+
+block content
+
+    nav(class='navbar navbar-expand-md navbar-dark fixed-top bg-dark')
+        a(class='navbar-brand' href='/') Apex Visualizer
+        span(class='vertical_line')
+        form(onsubmit='get_app_details();' class='search')
+          span(class='nav_text') Env: 
+          select(id='app_env' class='form-control' name='env')
+            each val in envs
+              option= val
+          input(type="text" id='search' name='app_id' class='form-control mr-sm-2' placeholder="Search for Apex App") 
+          input(type="submit" id='search_btn' class="btn btn-primary" value='Search')
+
+    div(class = 'all_running_apps')
+      
+    span
+        img(id='loading_img' src="images/loading.gif" style="width: 55px;float: right; display:none;")
+
+    div( class='app_details')
+        span
+          b Application name: &nbsp;
+        span(class='app_name')
+        span(class='app_stram'  style="padding-left: 30px")
+          a(href='' target='_blank') Stram
+        span(class='app_physical_plan' style="padding-left: 30px")
+          a(href='' target='_blank') Physical plan
+        table( class='table table-bordered table-sm display_tables' id='stats_table' )
+            thead( class="thead-default")
+                tr
+                   th(title="ID - Name of the operator") Name
+                   th(title="Total tuples processed") TTP
+                   th(title="Total tuples emitted")  TTE
+                   th(title="Tuples processed per second moving average") TP/s
+                   th(title="Tuples emitted per second moving average") TE/s
+                   th(title="CPU utilization") CPU %
+                   th(title="Latency in ms") Latency (ms)
+                   th(title="Status of current operator") Status
+                   th(title="Last heart beat recieved time in local time") Last heart beat time
+                   th(title="Time difference(sec) between current and previous heartbeat ") Last heart beat sec
+                   th(title="Logs") Logs
+
+    div(class="live map live_map")
+        <svg width='300' height='10000'><g/></svg>
+
+    script(src="/javascripts/jquery.min.js")
+    script(src='/javascripts/d3.v3.min.js')
+    script(src='/javascripts/dagre-d3.min.js')
+    script(src='/javascripts/popper.min.js')
+    script(src='/javascripts/typeahead.bundle.js')
+    script(src='/javascripts/bootstrap.min.js')
+
+    script(src='/javascripts/script2.js')
