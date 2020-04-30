@@ -24,8 +24,13 @@
     "debug": "~2.6.3",
     "express": "~4.15.2",
     "forever": "^0.15.3",
-    "jquery": "~3.2.1",
+
+    "jquery": "~3.5.0",
+
+
+
     "morgan": "~1.9.1",
+
     "nodemon": "^1.11.0",
     "pug": "~2.0.0-beta11",
     "serve-favicon": "~2.4.2",
